@@ -7,6 +7,7 @@
     "dev": "set PORT=2030 && nodemon --inspect ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.25.0",
     "bcrypt": "^5.0.1",
     "body-parser": "^1.19.1",
     "cookie-parser": "~1.4.4",
@@ -18,5 +19,17 @@
     "jwt": "^0.2.0",
     "mongoose": "^6.1.8",
     "morgan": "~1.9.1"
-  }
+  },
+  "description": "",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AxelUrizar/ProyectoBackend_BuscadorDePeliculas.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AxelUrizar/ProyectoBackend_BuscadorDePeliculas/issues"
+  },
+  "homepage": "https://github.com/AxelUrizar/ProyectoBackend_BuscadorDePeliculas#readme"
 }
