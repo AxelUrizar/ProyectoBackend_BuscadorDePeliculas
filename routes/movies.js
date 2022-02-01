@@ -1,7 +1,7 @@
-const funciones = require('../funciones')
-
 var express = require('express');
 var router = express.Router();
+
+const funciones = require('../funciones')
 
 router.get('/', async (req, res) => {
     // console.log(await funciones.peliculas())
