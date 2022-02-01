@@ -3,7 +3,7 @@ var router = express.Router();
 
 // const auth = require('../middlewares/auth');
 
-router.get('/', (req, res) => {
+router.get('/newOrder', (req, res) => {
     // let fecha = new Date.now()
     console.log('hola')
     let date = new Date()
