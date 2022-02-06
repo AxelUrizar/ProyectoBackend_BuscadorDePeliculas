@@ -22,6 +22,11 @@ const UserSchema = new mongoose.Schema({
         default: 'user',
         required: true
     },
+    activeLoan: {
+        type: Boolean,
+        default: false,
+        required: true
+    },
     tokens: [{
         token: {
           type: String,
@@ -66,7 +71,7 @@ UserSchema.methods.generateAuthToken = async function() {
     user.tokens = user.tokens.concat({token: token})
     await user.save()
     return token
- }
+}
 
 UserSchema.statics.findByCredentials = async (email, password) => {
     // Search for a user by email and password.
@@ -79,7 +84,12 @@ UserSchema.statics.findByCredentials = async (email, password) => {
        throw new Error({ error: 'Invalid login credentials' })
     }
     return user
- }
+}
+
+UserSchema.methods.makeOrder = function() {
+    const user = this.toObject()
+    user.activeLoan = true;
+}
 
 const User = mongoose.model ('User', UserSchema);
 module.exports = UserSchema;
