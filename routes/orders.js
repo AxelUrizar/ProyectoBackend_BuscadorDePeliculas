@@ -2,7 +2,9 @@ var express = require('express');
 var router = express.Router();
 var User = require('../models/User');
 
-const auth = require('../middlewares/auth');
+var funciones = require('../funciones')
+
+// const auth = require('../middlewares/auth');
 
 router.get('/newOrder', async (req, res) => {
     // let fecha = new Date.now()
@@ -16,10 +18,20 @@ router.get('/newOrder', async (req, res) => {
     if (user.activeLoan == true) return res.send('This user already has one movie loaned')
 
     user.makeOrder()
+//     let listadoParaFiltrar = await funciones.peliculas();
+//     let rentedMovie = {}
+
+//    listadoParaFiltrar.forEach(element => {
+//         if (element.id == req.query.id) {
+//             rentedMovie = element.original_title
+//         }
+//     });
 
     res.json({
+        rented_movie: rentedMovie,
         rent_date: date.toLocaleDateString(),
-        expire_date: expireDateCalculated
+        rent_time: '7 days',
+        expire_date: expireDate.toLocaleDateString(expireDate.setDate(expireDate.getDate() + 7))
     })
     
 })
