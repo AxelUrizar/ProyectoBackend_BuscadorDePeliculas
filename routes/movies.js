@@ -22,10 +22,16 @@ router.get('/id/:id', async (req, res) => {
 router.get('/search', async (req, res)=>{
     console.log('entrada funcion')
     let listadoPeliculas = [];
+
     for (const pelicula of await funciones.peliculas()) {
         let textoBuscado = req.query.title.toLowerCase();
         let titulo = pelicula.original_title.toLowerCase();
+
+        if (titulo.indexOf(textoBuscado) !== -1) {
+            listadoPeliculas.push(pelicula);
+        }
     }
+    
     res.json(await funciones.NombrePeliculas(listadoPeliculas))
 })
 

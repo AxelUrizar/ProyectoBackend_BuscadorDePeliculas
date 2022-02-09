@@ -6,13 +6,13 @@ var funciones = require('../funciones')
 
 // const auth = require('../middlewares/auth');
 
-router.get('/newOrder', async (req, res) => {
-    // let fecha = new Date.now()
+router.post('/newOrder', async (req, res) => {
+    // let fecha = new Date.now()    
+    let user = await User.findOne({_id:req.query.id})
+
     let date = new Date()
     let expireDate = new Date()
     let expireDateCalculated = expireDate.toLocaleDateString(expireDate.setDate(expireDate.getDate() + 7))
-    
-    let user = await User.findOne({_id:req.query.id})
 
     if (!user) return res.send('Usuario no válido')
     if (user.activeLoan == true) return res.send('This user already has one movie loaned')
@@ -20,7 +20,6 @@ router.get('/newOrder', async (req, res) => {
     user.makeOrder()
 
     res.json({
-        rented_movie: rentedMovie,
         rent_date: date.toLocaleDateString(),
         rent_time: '7 days',
         expire_date: expireDate.toLocaleDateString(expireDate.setDate(expireDate.getDate() + 7))

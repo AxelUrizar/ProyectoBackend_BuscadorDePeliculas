@@ -86,9 +86,18 @@ UserSchema.statics.findByCredentials = async (email, password) => {
     return user
 }
 
-UserSchema.methods.makeOrder = function() {
-    const user = this.toObject()
+UserSchema.methods.makeOrder = async function() {
+    const user = this
+    let date = new Date()
+    let expireDate = new Date()
+    let expireDateCalculated = expireDate.toLocaleDateString(expireDate.setDate(expireDate.getDate() + 7))
+
     user.activeLoan = true;
+    user.loan = { 
+        rent_date: date.toLocaleDateString(),
+        expire_date: expireDate.toLocaleDateString(expireDate.setDate(expireDate.getDate() + 7))
+    }
+    await user.save()
 }
 
 const User = mongoose.model ('User', UserSchema);
