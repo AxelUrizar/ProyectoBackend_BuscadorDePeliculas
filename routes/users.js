@@ -1,18 +1,16 @@
 var express = require('express');
 var router = express.Router();
 var User = require('../models/User');
+var Token = require('../models/Token')
+var jwt = require('jsonwebtoken')
 
 const auth = require('../middlewares/auth');
 
 /* GET users listing. */
 router.get('/', async function(req, res, next) {
   const users = await User.find({});//{role: 'Admin'}
-  // user.role = 'user';
-  // await user.replaceOne(user);
   
-  // console.log(users.toObject());
-  console.log(users)
-  let result = (users.length > 0)? users: [{message: "No hay usuarios que mostrar."}];
+  let result = (users.length > 0) ? users : [{message: "No hay usuarios que mostrar."}];
   res.json(result)
 });
 
@@ -44,73 +42,44 @@ router.post('/login', async(req, res) => {
   //Login a registered user
   try {
     const { email, password } = req.body
-    const user = await User.findByCredentials(email, password)
+    const user = await User.findOne({email: email, password: password})
     if (!user) {
        return res.status(401).send({error: 'Login failed! Check authentication credentials'})
     }
-    const token = await user.generateAuthToken();
-    res.json({ "user": {"email": user.email, "name": user.name}, token })
+    // const token = await user.generateAuthToken();
+    const tokenCreated = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET)
+    await Token.create({ token: tokenCreated, userId: user._id })
+    res.json(tokenCreated)
+
+    // user.tokens = user.tokens.concat({token: tokenCreated})
+    // await user.save()
+    // res.json(tokenCreated)
   } catch (error) {
-     res.status(400).send(error)
+     res.status(400).json(error)
   }
 
 })
 
-// router.get('/logout', auth, async (req, res, next) => {
-//   res.status(501).json({});
-// });
+router.delete('/logout', auth, async (req, res, next) => {
+  try {
+    const tokenRemoved = await Token.remove({token: req.token})
 
-// router.get('/profile', /*auth,*/ async (req, res, next) => {
-//   res.status(501).json({});
-// });
+    if(tokenRemoved.deletedCount !== 1) return res.json('Algo salió mal')
+    return res.json('LogOut completed')
+  } catch (error) {
+    res.json(error)
+  }
+});
+
 
 router.get('/profile', auth, async function(req, res, next) {
   res.json(req.user)
 });
 
-router.delete('/delete/:id', /*auth,*/ async (req, res, next) => {
-  const result = await User.remove({_id: req.params.id});
-  if (result === 0) res.status(200).json({message: "No se ha podido eliminar al usuario."});
-
-  res.json({message: "El usuario ha sido eliminado correctamente."}).status(204);
-});
-
-// router.put('/change-password/:id', auth, async (req, res, next) => {
-//   // Only users who has admin role;
-//   res.status(501).json({});
-// });
-
-// router.put('/change-profile/:id', auth, async (req, res, next) => {
-//   // Only users who has admin role;
-//   res.status(501).json({});
-// });
-
-// router.get('/create', async function(req, res) {
-//   //res.send('respond with a resource');
-//   const teacherData = [{
-//       name: "Jordi Valentín",
-//       email: 'test@test.com',
-//       password: 123456,
-//       tokens:[
-//         'aaaa-aaaaa-aaaaa',
-//         'aaaa-aaaaa-aaaaa'
-//       ]
-//     },
-//     {
-//       name: "Rafa Garcia",
-//       email: 'test2@test.com',
-//       password: 123456,
-//       tokens:[
-//         'aaaa-aaaaa-aaaaa',
-//         'aaaa-aaaaa-aaaaa'
-//       ]
-//     }]
-//   const user = await User.insertMany(teacherData);//{role: 'Admin'}
-//   //const user = await User.find();//{role: 'Admin'}
-//   //user.role = 'user';
-//   //await user.replaceOne(user);
-//   console.log(user);
-//   res.json({});
-// });
+router.get('/tokens', async (req, res) => {
+  Token.find({})
+    .then(response => res.json(response))
+    .catch(err => console.log(err))
+})
 
 module.exports = router;
