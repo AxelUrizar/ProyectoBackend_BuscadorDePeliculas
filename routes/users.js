@@ -49,7 +49,7 @@ router.post('/login', async(req, res) => {
     // const token = await user.generateAuthToken();
     const tokenCreated = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET)
     await Token.create({ token: tokenCreated, userId: user._id })
-    res.json(tokenCreated)
+    res.json({user, token: tokenCreated})
 
     // user.tokens = user.tokens.concat({token: tokenCreated})
     // await user.save()
