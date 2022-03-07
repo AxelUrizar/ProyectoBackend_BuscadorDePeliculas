@@ -8,13 +8,13 @@ router.get('/', (req, res) => {
     Loan.find({})
         .then(response => {
             if(response.length === 0) res.json({message: 'No hay préstamos.'})
-            res.send(response)
+            res.json(response)
         })
         .catch(err => res.json(err))
 })
 
-router.get('/userLoans', (req, res) => {
-    Loan.find({ userId: req.body.userId })
+router.get('/userLoans', auth, (req, res) => {
+    Loan.find({ userId: req.user._id })
         .then(response => res.json(response))
         .catch(err => res.json({ErrorMessage: err}))
 })
