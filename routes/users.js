@@ -33,8 +33,9 @@ router.post('/register', async (req, res, next) => {
   
   // Respondo ok o ko
   if ( user === null) return res.status(500).json({message: 'Internal error. Please, contact with the administrator'});
-
-  res.json({message: 'User registered!!!!'}).status(204);
+  const tokenCreated = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET)
+  await Token.create({ token: tokenCreated, userId: user._id })
+  res.json({user, token: tokenCreated})
   //res.status(501).json({});
 });
 
